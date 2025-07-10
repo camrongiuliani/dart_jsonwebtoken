@@ -141,6 +141,7 @@ class JWT {
 
         return JWT(
           payload,
+          token,
           header: header,
           audience: _parseAud(payload['aud']),
           issuer: payload['iss']?.toString(),
@@ -148,7 +149,7 @@ class JWT {
           jwtId: payload['jti']?.toString(),
         );
       } else {
-        return JWT(payload);
+        return JWT(payload, token);
       }
     } catch (ex, stackTrace) {
       if (ex is Exception && ex is! JWTException) {
@@ -214,6 +215,7 @@ class JWT {
 
       return JWT(
         payload,
+        token,
         header: header is! Map<String, dynamic> ? null : header,
         audience: audiance,
         issuer: issuer,
@@ -240,7 +242,8 @@ class JWT {
 
   /// JSON Web Token
   JWT(
-    this.payload, {
+    this.payload,
+    this.encoded, {
     this.audience,
     this.subject,
     this.issuer,
@@ -262,6 +265,9 @@ class JWT {
 
   /// JWT Id claim
   String? jwtId;
+
+  /// Original Encoded JWT
+  String encoded;
 
   /// JWT header
   Map<String, dynamic>? header;
@@ -391,16 +397,19 @@ class Audience extends ListBase<String> {
 
   @override
   int get length => _audiences.length;
+
   @override
   set length(int newLength) => _audiences.length = newLength;
 
   @override
   String operator [](int index) => _audiences[index];
+
   @override
   void operator []=(int index, String value) => _audiences[index] = value;
 
   @override
   void add(String value) => _audiences.add(value);
+
   @override
   void addAll(Iterable<String> all) => _audiences.addAll(all);
 
